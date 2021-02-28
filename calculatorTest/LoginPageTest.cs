@@ -76,7 +76,7 @@ namespace calculatorTest
             browser.Quit();
         }
         [Test]
-        public void Test_User_Login_And_Password_Space_In_User_And_Correct_Password()
+        public void Test_User_Login_And_Password_Space_In_User_And_Password_Correct()
         {
             IWebDriver browser = new ChromeDriver();
             browser.Url = (BASEURL + "Login");
