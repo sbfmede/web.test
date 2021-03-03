@@ -1,6 +1,8 @@
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
+using System;
 
 namespace calculatorTest
 {
@@ -8,27 +10,32 @@ namespace calculatorTest
     {
 
         const string BASEURL = "http://localhost:64177/";
+        IWebDriver browser;
+
         [SetUp]
         public void Setup()
         {
+            browser = new ChromeDriver();
+            browser.Url = (BASEURL + "Login");
+
+            browser.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(60);
+            browser.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
         }
 
         [Test]
 
         public void Test_User_Login_And_Password_Invalid_Values()
         {
-            IWebDriver browser = new ChromeDriver();
-            browser.Url = (BASEURL + "Login");
+            
             IWebElement loginfield = browser.FindElement(By.Id("login"));
             string name = "1234";
             loginfield.SendKeys(name);
             IWebElement passwordfield = browser.FindElement(By.Id("password"));
             passwordfield.SendKeys("@#$%");
-            browser.FindElements(By.Id("login"))[1].Click();
+            browser.FindElement(By.Id("loginBtn")).Click();
             IWebElement error = browser.FindElement(By.Id("errorMessage"));
             Assert.AreEqual("'" + name + "' user doesn't exist!", error.Text);
-            browser.Quit();
-
+            
 
         }
         [Test]
@@ -41,7 +48,7 @@ namespace calculatorTest
             loginfield.SendKeys(name);
             IWebElement passwordfield = browser.FindElement(By.Id("password"));
             passwordfield.SendKeys("newyork1");
-            browser.FindElements(By.Id("login"))[1].Click();
+            browser.FindElement(By.Id("loginBtn")).Click();
             Assert.AreEqual(BASEURL + "Deposit", browser.Url);
             browser.Quit();
         }
@@ -55,7 +62,7 @@ namespace calculatorTest
             loginfield.SendKeys(name);
             IWebElement passwordfield = browser.FindElement(By.Id("password"));
             passwordfield.SendKeys(" ");
-            browser.FindElements(By.Id("login"))[1].Click();
+            browser.FindElement(By.Id("loginBtn")).Click();
             IWebElement error = browser.FindElement(By.Id("errorMessage"));
             Assert.AreEqual("User name and password cannot be empty!", error.Text);
             browser.Quit();
@@ -70,7 +77,7 @@ namespace calculatorTest
             loginfield.SendKeys(name);
             IWebElement passwordfield = browser.FindElement(By.Id("password"));
             passwordfield.SendKeys("Admin");
-            browser.FindElements(By.Id("login"))[1].Click();
+            browser.FindElement(By.Id("loginBtn")).Click();
             IWebElement error = browser.FindElement(By.Id("errorMessage"));
             Assert.AreEqual("'" + name + "' user doesn't exist!", error.Text);
             browser.Quit();
@@ -85,7 +92,7 @@ namespace calculatorTest
             loginfield.SendKeys(name);
             IWebElement passwordfield = browser.FindElement(By.Id("password"));
             passwordfield.SendKeys("newyork1");
-            browser.FindElements(By.Id("login"))[1].Click();
+            browser.FindElement(By.Id("loginBtn")).Click();
             IWebElement error = browser.FindElement(By.Id("errorMessage"));
             Assert.AreEqual("Incorrect user name!", error.Text);
             browser.Quit();
@@ -100,7 +107,7 @@ namespace calculatorTest
             loginfield.SendKeys(name);
             IWebElement passwordfield = browser.FindElement(By.Id("password"));
             passwordfield.SendKeys("newyork1");
-            browser.FindElements(By.Id("login"))[1].Click();
+            browser.FindElement(By.Id("loginBtn")).Click();
             IWebElement error = browser.FindElement(By.Id("errorMessage"));
             Assert.AreEqual("Incorrect user name!", error.Text);
             browser.Quit();
@@ -115,7 +122,7 @@ namespace calculatorTest
             loginfield.SendKeys(name);
             IWebElement passwordfield = browser.FindElement(By.Id("password"));
             passwordfield.SendKeys("newyork1");
-            browser.FindElements(By.Id("login"))[1].Click();
+            browser.FindElement(By.Id("loginBtn")).Click();
             IWebElement error = browser.FindElement(By.Id("errorMessage"));
             Assert.AreEqual("Incorrect user name!", error.Text);
             browser.Quit(); 
@@ -130,11 +137,26 @@ namespace calculatorTest
             loginfield.SendKeys(name);
             IWebElement passwordfield = browser.FindElement(By.Id("password"));
             passwordfield.SendKeys("NEWYOURK1");
-            browser.FindElements(By.Id("login"))[1].Click();
+            browser.FindElement(By.Id("loginBtn")).Click();
             IWebElement error = browser.FindElement(By.Id("errorMessage"));
             Assert.AreEqual("Incorrect password!", error.Text);
             browser.Quit();
 
+        }
+        [Test]
+        public void Test_User_Login_And_Password_Remained_Password_Availability()
+        {
+            new WebDriverWait(browser, TimeSpan.FromSeconds(10))
+.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.VisibilityOfAllElementsLocatedBy(By.Id("remindBtn")));
+
+            IWebElement Remind = browser.FindElement(By.Id("remindBtn"));
+            Assert.IsTrue(Remind.Displayed);
+        }
+
+    [TearDown]
+        public void AfterEachTest()
+        {
+            browser.Quit();
         }
     }
 }
