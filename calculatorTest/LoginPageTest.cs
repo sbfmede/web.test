@@ -39,7 +39,7 @@ namespace calculatorTest
 
         }
         [Test]
-        public void Test_User_Login_And_Password_Valide_Values()
+        public void Test_User_Login_And_Password_Valide_Value()
         {
             IWebElement loginfield = browser.FindElement(By.Id("login"));
             string name = "test";
